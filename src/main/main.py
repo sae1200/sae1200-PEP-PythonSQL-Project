@@ -54,7 +54,11 @@ def main():
 # This function will load the users.csv file into the users table, discarding any records with incomplete data
 def load_and_clean_users(file_path):
 
-    print("TODO: load_users")
+    raw_users = []
+    with open(file_path, "r") as f:
+        raw_users = list(csv.DictReader(f))
+    
+    print(len(raw_users))
 
 
 # This function will load the callLogs.csv file into the callLogs table, discarding any records with incomplete data
