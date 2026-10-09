@@ -62,9 +62,7 @@ def load_and_clean_users(file_path):
     
     for raw_user in raw_users:
 
-        if re.match('[a-zA-Z]$', raw_user['firstName']) and re.match('[a-zA-Z]$', raw_user['lastName']):
-
-            print('Adding')
+        if re.match('[a-zA-Z]+$', raw_user['firstName']) and re.match('[a-zA-Z]+$', raw_user['lastName']):
 
             cursor.execute('''
                 INSERT INTO users (firstName, lastName)
