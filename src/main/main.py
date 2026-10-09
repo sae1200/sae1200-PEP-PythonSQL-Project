@@ -121,6 +121,8 @@ def write_user_analytics(csv_file_path):
     ''')
     callLogs = cursor.fetchall()
 
+    print(callLogs)
+
     with open(csv_file_path, 'w', newline='') as f:
         csv.writer(f).writerows(callLogs)
 
