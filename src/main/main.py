@@ -62,18 +62,51 @@ def load_and_clean_users(file_path):
     
     for raw_user in raw_users:
 
-        if re.match('[a-zA-Z]+$', raw_user['firstName']) and re.match('[a-zA-Z]+$', raw_user['lastName']):
+        # Skin row if incorrect number of fields
+        if len(raw_user) != 2:
+            continue
 
-            cursor.execute('''
-                INSERT INTO users (firstName, lastName)
-                VALUES (?, ?)
-            ''', (raw_user['firstName'], raw_user['lastName']))
+        # Skip row if firstName or lastName is not purely alphabetic characters
+        if not re.match('[a-zA-Z]+$', raw_user['firstName']) or not re.match('[a-zA-Z]+$', raw_user['lastName']):
+            continue
+
+        # Insert row into the users table
+        cursor.execute('''
+            INSERT INTO users (firstName, lastName)
+            VALUES (?, ?)
+        ''', (raw_user['firstName'], raw_user['lastName']))
 
 
 # This function will load the callLogs.csv file into the callLogs table, discarding any records with incomplete data
 def load_and_clean_call_logs(file_path):
 
-    print("TODO: load_call_logs")
+    raw_call_logs = []
+    with open(file_path, "r") as f:
+        raw_call_logs = list(csv.DictReader(f))
+
+    for raw_log in raw_call_logs:
+
+        # Skip row if incorrect number of fields
+        if len(raw_log) != 5:
+            continue
+
+        # Skip row if phone number is invalid
+        if not re.match(r'^\d{3}-\d{3}-\d{4}$', raw_log['phoneNumber']):
+            continue
+
+        # Skip row if startTime, endTime, or userId are not purely numeric
+        if not re.match('^[0-9]+$', raw_log['startTime']) or not re.match('^[0-9]+$', raw_log['endTime']) or not re.match('^[0-9]+$', raw_log['userId']):
+            continue
+
+        # Skip row if direction is invalid
+        if raw_log['direction'] != 'outbound' and raw_log['direction'] != 'inbound':
+            continue
+
+        # Insert the validated row into the callLogs table
+        cursor.execute('''
+            INSERT INTO callLogs (phoneNumber, startTime, endTime, direction, userId)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (raw_log['phoneNumber'], raw_log['startTime'], raw_log['endTime'], raw_log['direction'], raw_log['userId']))
 
 
 # This function will write analytics data to testUserAnalytics.csv - average call time, and number of calls per user.
