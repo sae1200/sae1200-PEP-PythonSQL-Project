@@ -62,7 +62,7 @@ def load_and_clean_users(file_path):
     
     for raw_user in raw_users:
 
-        # Skin row if incorrect number of fields
+        # Skip row if incorrect number of fields
         if len(raw_user) != 2:
             continue
 
@@ -73,7 +73,7 @@ def load_and_clean_users(file_path):
         # Insert row into the users table
         cursor.execute('''
             INSERT INTO users (firstName, lastName)
-            VALUES (?, ?)
+            VALUES (?, ?);
         ''', (raw_user['firstName'], raw_user['lastName']))
 
 
@@ -105,7 +105,7 @@ def load_and_clean_call_logs(file_path):
         # Insert the validated row into the callLogs table
         cursor.execute('''
             INSERT INTO callLogs (phoneNumber, startTime, endTime, direction, userId)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?);
         ''', (raw_log['phoneNumber'], raw_log['startTime'], raw_log['endTime'], raw_log['direction'], raw_log['userId']))
 
 
@@ -114,7 +114,15 @@ def load_and_clean_call_logs(file_path):
 # example: 1,105.0,4 - where 1 is the userId, 105.0 is the avgDuration, and 4 is the numCalls.
 def write_user_analytics(csv_file_path):
 
-    print("TODO: write_user_analytics")
+    cursor.execute('''
+        SELECT userId, AVG(endTime - startTime), COUNT(*)
+        FROM callLogs
+        GROUP BY userId;
+    ''')
+    callLogs = cursor.fetchall()
+
+    with open(csv_file_path, 'w', newline='') as f:
+        csv.writer(f).writerows(callLogs)
 
 
 # This function will write the callLogs ordered by userId, then start time.
