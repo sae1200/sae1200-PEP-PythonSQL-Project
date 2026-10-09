@@ -2,6 +2,8 @@ import csv
 import os
 import sqlite3
 
+import re
+
 # Resolve the resources folder relative to this file, so paths work
 # no matter what directory the script is run from.
 _RESOURCES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'resources')
