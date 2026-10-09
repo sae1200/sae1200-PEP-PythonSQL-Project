@@ -121,8 +121,6 @@ def write_user_analytics(csv_file_path):
     ''')
     callLogs = cursor.fetchall()
 
-    print(callLogs)
-
     with open(csv_file_path, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['userId', 'avgDuration', 'numCalls'])
@@ -133,7 +131,17 @@ def write_user_analytics(csv_file_path):
 # Then, write the ordered callLogs to orderedCalls.csv
 def write_ordered_calls(csv_file_path):
 
-    print("TODO: write_ordered_calls")
+    cursor.execute('''
+        SELECT callId, phoneNumber, startTime, endTime, direction, userId
+        FROM callLogs
+        ORDER BY userId;
+    ''')
+    callLogs = cursor.fetchall()
+
+    with open(csv_file_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['callId', 'phoneNumber', 'startTime', 'endTime', 'direction', 'userId'])
+        writer.writerows(callLogs)
 
 
 
