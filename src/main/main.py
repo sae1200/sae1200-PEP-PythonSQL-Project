@@ -61,12 +61,12 @@ def load_and_clean_users(file_path):
         raw_users = list(csv.DictReader(f))
     
     for raw_user in raw_users:
-        if re.match('[a-z]+,[a-z]+$', raw_user, flags=re.IGNORECASE):
-            parsed = raw_user.split(',').strip()
+        if re.match('[a-zA-Z]$', raw_user['firstName']) and re.match('[a-zA-Z]$', raw_user['lastName']):
+            
             cursor.execute('''
                 INSERT INTO users (firstName, lastName)
                 VALUES (?, ?)
-            ''', (parsed[0], parsed[1]))
+            ''', (raw_user['firstName'], raw_user['lastName']))
 
 
 # This function will load the callLogs.csv file into the callLogs table, discarding any records with incomplete data
