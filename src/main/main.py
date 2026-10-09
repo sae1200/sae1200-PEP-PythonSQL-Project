@@ -61,8 +61,11 @@ def load_and_clean_users(file_path):
         raw_users = list(csv.DictReader(f))
     
     for raw_user in raw_users:
+
+        print(raw_user['firstName'])
+
         if re.match('[a-zA-Z]$', raw_user['firstName']) and re.match('[a-zA-Z]$', raw_user['lastName']):
-            
+
             cursor.execute('''
                 INSERT INTO users (firstName, lastName)
                 VALUES (?, ?)
